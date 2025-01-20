@@ -74,8 +74,6 @@ export const RecipeListPage = ({ onSelectRecipe }) => {
     setSelectedHealthLabels(selectedValues);
   };
 
-  // filter recipes
-
   const filteredRecipes = data.hits.filter((hit) => {
     const matchesSearchTerm = hit.recipe.label
       .toLowerCase()
@@ -104,7 +102,6 @@ export const RecipeListPage = ({ onSelectRecipe }) => {
     <Center flexDir="column" p={[3, 5]} bg="gray.50" minH="100vh">
       <Heading mb={[4, 5]}>Recipe Checker</Heading>
 
-      {/* Search Bar */}
       <Input
         placeholder="Search recipes by name.."
         value={searchTerm}
@@ -115,7 +112,6 @@ export const RecipeListPage = ({ onSelectRecipe }) => {
         boxShadow="sm"
       />
 
-      {/* Dropdown Health Labels Filter */}
       <Box mb={[3, 4]} width={["90%", "70%", "50%"]}>
         <Select
           isMulti
@@ -125,7 +121,6 @@ export const RecipeListPage = ({ onSelectRecipe }) => {
         />
       </Box>
 
-      {/* Checkboxes Cautions Filter */}
       <CheckboxGroup
         colorScheme="red"
         onChange={(values) => setSelectedCautions(values)}
@@ -139,7 +134,6 @@ export const RecipeListPage = ({ onSelectRecipe }) => {
         </HStack>
       </CheckboxGroup>
 
-      {/* Recipe Grid */}
       <Box
         display="grid"
         gridTemplateColumns={["1fr", "repeat(2, 1fr)", "repeat(3, 1fr)"]}
@@ -147,95 +141,104 @@ export const RecipeListPage = ({ onSelectRecipe }) => {
         width="100%"
         px={[3, 6]}
       >
-        {filteredRecipes.map((hit) => (
-          <Box
-            key={hit.recipe.label}
-            p={4}
-            shadow="md"
-            borderWidth="1px"
-            borderRadius="md"
-            _hover={{ bg: "gray.200", cursor: "pointer" }}
-            onClick={() => onSelectRecipe(hit.recipe)}
-            minH="100vh"
-            bg="white"
-            textAlign="center"
-          >
-            <Image
-              src={hit.recipe.image}
-              alt={hit.recipe.label}
-              borderRadius="md"
-              width={["100%"]}
-              height={[200, 250]}
-              objectFit="cover"
-            />
-            <Heading size="md" mt={3} mb={2}>
-              {hit.recipe.label}
-            </Heading>
-            {hit.recipe.dietLabels.length > 0 && (
-              <Text>Diet: {hit.recipe.dietLabels.join(", ")}</Text>
-            )}
-
-            <Text>
-              Dish Type:{" "}
-              <Text as="span" fontWeight="bold">
-                {" "}
-                {hit.recipe.dishType.join(", ")}
-              </Text>
+        {filteredRecipes.length === 0 ? (
+          <Box textAlign="center">
+            <Text fontSize="lg" color="gray.500">
+              No recipes found matching your criteria. Try adjusting the filters
+              or search term.
             </Text>
-            {hit.recipe.cautions.length > 0 && (
-              <Box mt={2}>
-                {hit.recipe.cautions.map((caution) => (
-                  <Text
-                    key={caution}
-                    display="inline-block"
-                    bg="red.100"
-                    color="red.600"
+          </Box>
+        ) : (
+          filteredRecipes.map((hit) => (
+            <Box
+              key={hit.recipe.label}
+              p={4}
+              shadow="md"
+              borderWidth="1px"
+              borderRadius="md"
+              _hover={{ bg: "gray.200", cursor: "pointer" }}
+              onClick={() => onSelectRecipe(hit.recipe)}
+              minH="100vh"
+              bg="white"
+              textAlign="center"
+            >
+              <Image
+                src={hit.recipe.image}
+                alt={hit.recipe.label}
+                borderRadius="md"
+                width={["100%"]}
+                height={[200, 250]}
+                objectFit="cover"
+              />
+              <Heading size="md" mt={3} mb={2}>
+                {hit.recipe.label}
+              </Heading>
+              {hit.recipe.dietLabels.length > 0 && (
+                <Text>Diet: {hit.recipe.dietLabels.join(", ")}</Text>
+              )}
+
+              <Text>
+                Dish Type:{" "}
+                <Text as="span" fontWeight="bold">
+                  {" "}
+                  {hit.recipe.dishType.join(", ")}
+                </Text>
+              </Text>
+              {hit.recipe.cautions.length > 0 && (
+                <Box mt={2}>
+                  {hit.recipe.cautions.map((caution) => (
+                    <Text
+                      key={caution}
+                      display="inline-block"
+                      bg="red.100"
+                      color="red.600"
+                      px={2}
+                      py={1}
+                      borderRadius="md"
+                      mr={1}
+                      fontSize="sm"
+                    >
+                      {caution}
+                    </Text>
+                  ))}
+                </Box>
+              )}
+              <Stack mt={3} direction="row" justify="center" spacing={4}>
+                {hit.recipe.healthLabels.includes("Vegetarian") && (
+                  <Box
+                    bg="green.100"
+                    color="green.600"
                     px={2}
                     py={1}
                     borderRadius="md"
-                    mr={1}
                     fontSize="sm"
                   >
-                    {caution}
-                  </Text>
-                ))}
-              </Box>
-            )}
-            <Stack mt={3} direction="row" justify="center" spacing={4}>
-              {hit.recipe.healthLabels.includes("Vegetarian") && (
-                <Box
-                  bg="green.100"
-                  color="green.600"
-                  px={2}
-                  py={1}
-                  borderRadius="md"
-                  fontSize="sm"
-                >
-                  Vegetarian
-                </Box>
-              )}
-              {hit.recipe.healthLabels.includes("Vegan") && (
-                <Box
-                  bg="green.100"
-                  color="green.600"
-                  px={2}
-                  py={1}
-                  borderRadius="md"
-                  fontSize="sm"
-                >
-                  Vegan
-                </Box>
-              )}
-            </Stack>
-            <Button
-              mt={4}
-              colorScheme="teal"
-              onClick={() => onSelectRecipe(hit.recipe)}
-            >
-              View Details
-            </Button>
-          </Box>
-        ))}
+                    Vegetarian
+                  </Box>
+                )}
+                {hit.recipe.healthLabels.includes("Vegan") && (
+                  <Box
+                    bg="green.100"
+                    color="green.600"
+                    px={2}
+                    py={1}
+                    borderRadius="md"
+                    fontSize="sm"
+                  >
+                    Vegan
+                  </Box>
+                )}
+              </Stack>
+              <Button
+                mt={4}
+                colorScheme="teal"
+                onClick={() => onSelectRecipe(hit.recipe)}
+              >
+                View Details
+              </Button>
+            </Box>
+          ))
+        )}
       </Box>
     </Center>
   );
